@@ -1,0 +1,157 @@
+/* Styles for the bilingual reading page.
+ * Loaded inline into the generated HTML, so the pane needs no external files.
+ * Greyscale only: the emphasis marks must read as typography, not as colour.
+ */
+:root { color-scheme: light dark; }
+* { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  padding: 0 0 48px;
+  font: 16px/1.95 "Helvetica Neue", "PingFang SC", "Songti SC", serif;
+  overflow-wrap: break-word;
+}
+
+/* ---- header ---- */
+.pr-doc-head { padding: 28px 30px 14px; }
+.pr-doc-head h1 { font-size: 21px; line-height: 1.5; margin: 0 0 8px; }
+.pr-meta { margin: 0; font-size: 13px; opacity: .62; }
+.pr-legend {
+  margin: 14px 0 0;
+  padding: 10px 12px;
+  font-size: 12.5px;
+  line-height: 1.9;
+  opacity: .8;
+  border: 1px solid rgba(128,128,128,.35);
+  border-radius: 4px;
+}
+.pr-legend b { font-weight: 600; }
+.pr-overview { margin: 10px 30px 30px; padding: 16px 20px; border: 1px solid rgba(128,128,128,.5); border-radius: 5px; background: rgba(128,128,128,.045); }
+.pr-overview h2 { font-size: 18px; margin: 0 0 10px; }
+.pr-overview-item { margin: 12px 0; }
+.pr-overview-item h3 { font-size: 14px; margin: 0 0 2px; }
+.pr-overview-item p { margin: 0; font-size: 14px; line-height: 1.75; }
+
+/* ---- page separation: a heavy double rule, greyscale only ---- */
+.pr-page { padding: 0 30px; }
+.pr-page-omitted {
+  height: 1px;
+  min-height: 1px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+.pr-page-mark {
+  margin: 54px 0 22px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(128,128,128,.45);
+  border-bottom: 3px double rgba(128,128,128,.75);
+  padding-bottom: 8px;
+  text-align: center;
+  font: 600 12px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+  letter-spacing: .16em;
+  color: rgba(128,128,128,1);
+}
+.pr-page-mark span { opacity: .95; }
+
+/* ---- body text ---- */
+.pr-block { margin: 0 0 1em; text-align: justify; }
+.pr-note { font-size: 13.5px; line-height: 1.8; opacity: .8; }
+.pr-sep { text-align: center; opacity: .4; margin: 1.6em 0; letter-spacing: .3em; }
+h2.pr-block { font-size: 17px; margin: 1.6em 0 .6em; letter-spacing: .02em; }
+sup { font-size: .72em; vertical-align: super; line-height: 0; opacity: .8; }
+
+/* ---- tables (PaddleOCR table blocks, greyscale, horizontally scrollable) ---- */
+.pr-tableblock { margin: 1.2em 0 1.6em; overflow-x: auto; }
+.pr-tableblock table {
+  border-collapse: collapse;
+  width: 100%;
+  font: 12.5px/1.5 "Helvetica Neue", "PingFang SC", sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+.pr-tableblock caption {
+  caption-side: top;
+  text-align: left;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 0 0 6px;
+}
+.pr-tableblock th,
+.pr-tableblock td {
+  border: 1px solid rgba(128,128,128,.45);
+  padding: 3px 6px;
+  text-align: right;
+  vertical-align: top;
+}
+.pr-tableblock th {
+  background: rgba(128,128,128,.14);
+  text-align: center;
+  font-weight: 600;
+  line-height: 1.35;
+}
+.pr-tableblock td:first-child,
+.pr-tableblock th:first-child { text-align: left; }
+.pr-tableblock sup { opacity: 1; }
+
+/* ---- editorial emphasis: greyscale only ---- */
+.pr-term {
+  position: relative;
+  padding: 0 3px;
+  font-weight: 600;
+  font-style: italic;
+  border: 1px solid rgba(128,128,128,.4);
+  border-radius: 3px;
+  background: rgba(128,128,128,.12);
+}
+.pr-term-first {
+  border-color: rgba(96,96,96,.85);
+  background: rgba(128,128,128,.24);
+}
+.pr-term-tag {
+  margin-left: 3px;
+  padding: 0 3px;
+  font-size: 9.5px;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: .05em;
+  vertical-align: super;
+  border-radius: 2px;
+  background: rgba(96,96,96,.85);
+  color: #fff;
+}
+.pr-conclusion {
+  font-weight: 600;
+  /* marker-pen underline, survives line wrapping where a chip does not */
+  background: linear-gradient(transparent 60%, rgba(128,128,128,.35) 0);
+}
+
+/* ---- end notes (footnotesAtEnd) ---- */
+.pr-notes { padding: 0 30px 40px; }
+.pr-note-item {
+  margin: 0 0 .75em;
+  padding-left: 1.9em;
+  text-indent: -1.9em;
+  font-size: 13.5px;
+  line-height: 1.8;
+  opacity: .85;
+}
+.pr-note-num {
+  display: inline-block;
+  min-width: 1.5em;
+  font: 600 11.5px/1.7 ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: rgba(96,96,96,1);
+}
+.pr-note-src {
+  margin-left: .5em;
+  font-size: 11px;
+  opacity: .5;
+  white-space: nowrap;
+}
+.pr-fnref { text-decoration: none; color: inherit; }
+.pr-fnref sup { border-bottom: 1px solid rgba(128,128,128,.6); }
+.pr-fnback {
+  margin-left: .4em;
+  font-size: 12px;
+  text-decoration: none;
+  opacity: .55;
+}
+.pr-fnback:hover { opacity: 1; }

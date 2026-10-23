@@ -1,0 +1,33 @@
+{
+  "author": "Author Name",
+  "source": "",
+  "overview": {
+    "type": "theory",
+    "puzzle": "The question the author attempts to resolve, with page references.",
+    "method": "The texts, concepts, and reasoning used by the author.",
+    "conclusion": "The author's answer, including major qualifications.",
+    "contribution": "The conceptual or theoretical advance over prior accounts.",
+    "argument": "The main inferential steps in order, with page references."
+  },
+  "terms": [
+    "termOne",
+    "termTwo"
+  ],
+  "htmlStopBeforeReferences": true,
+  "inferredLabels": {
+    "0": "封面"
+  },
+  "conclusions": {
+    "block-0007": [
+      "the exact translated sentence that states the central claim"
+    ],
+    "block-0042": [
+      "a first conclusion sentence",
+      "a second one in the same block"
+    ]
+  },
+  "footnotesAtEnd": true,
+  "htmlOmitBlockIds": [],
+  "htmlBlockText": {},
+  "pdfCrops": {}
+}

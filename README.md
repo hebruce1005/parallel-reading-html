@@ -14,7 +14,7 @@
 
 ## 安装
 
-下载本仓库并将文件夹命名为 `parallel-reading-html`，放入所用 AI 助手支持的 skill 目录，或让助手直接读取这个文件夹中的 `SKILL.md`。保留 `references/`、`scripts/` 及其内部目录结构。
+下载本仓库并将文件夹命名为 `parallel-reading-html`，放入所用 AI Agent 支持的 skill 目录，或让复制网址让Agent直接安装。
 
 在仓库根目录创建 Python 3 虚拟环境并安装依赖。建议 Python 3.10 或更新版本；不同平台的实际可用版本还取决于 PyMuPDF 的安装支持。本仓库尚未进行跨平台测试。
 
@@ -35,67 +35,35 @@ py -3 -m venv .venv
 
 后续命令中的 `python` 应使用此环境的解释器。Windows 可直接替换为 `.\.venv\Scripts\python.exe`。若助手运行在另一个终端或隔离环境中，应告知它该解释器的位置；不要假定它继承了当前终端环境。
 
-## 配置 Paddle 令牌：首次使用照着做
+## 配置 Paddle 令牌：让 AI 助手帮你完成
 
-访问令牌就是 AI Studio 提供的一长串数字和字母，相当于调用服务的账户钥匙。它用于身份认证和账户额度归属，文件上传到哪个接口、用哪个解析模型，由脚本另外指定。Paddle 令牌不能用于 MinerU，也不会决定译文的语言风格。
+首次使用需要配置一次。令牌是调用 Paddle 解析服务的“钥匙”，每位使用者使用自己的令牌。
 
-### 1. 获取自己的令牌
+### 1. 领取令牌
 
-1. 打开 [PaddleOCR 官方体验页面](https://paddleocr.aistudio-app.com/)，登录自己的 AI Studio 账户。
-2. 在 API 调用窗口选择 PaddleOCR-VL-1.6，并使用“我的 AI Studio 访问令牌”；点击“获取令牌”入口，复制自己的令牌。界面名称如有调整，以当前页面为准。
-3. 只复制令牌字符串，不带 `TOKEN =`、引号、空格或换行。每位使用者配置自己的令牌。
+打开 [PaddleOCR 官方体验页面](https://aistudio.baidu.com/paddleocr/task/new)，登录或注册账户。在“API 调用”中选择 **PaddleOCR-VL-1.6**，点击“获取令牌”，复制那串数字和字母即可。无需复制官方示例代码。
 
-官方“复制代码”用于展示 API 调用方式。本仓库已有 `scripts/parse_paddle.py`，无需用示例代码覆盖它，也无需把令牌写进 Python 源文件。复制的官方示例可能包含个人令牌，公开分享前应移除。
+### 2. 让 AI 助手准备配置
 
-### 2. 推荐：保存到仓库外的本地配置文件
+在能操作本地文件的 Agent 中打开本 skill 文件夹，把下面这段话发给它：
 
-这种方式适合由桌面 AI 助手运行 skill：同一电脑、同一系统用户下，脚本可以直接读取文件，不依赖某个终端的临时环境变量。
+> 请帮我配置 parallel-reading-html 的运行环境和 Paddle 令牌。先检查并安装所需依赖，再提供一个不会显示输入内容的本地令牌输入方式，由我亲自粘贴。将令牌保存到当前用户的 ~/.config/parallel-reading-html/paddle-token，限制文件访问权限；不要把令牌写入 skill、Git 仓库、聊天回复或日志。检查是否有旧的 PADDLEOCR_ACCESS_TOKEN 环境变量覆盖它。完成后只告诉我是否配置成功。
 
-先打开终端，进入本仓库并准备好前文的 Python 环境。macOS／Linux 运行：
+按助手提示，在本地输入窗口或终端中粘贴令牌、按回车即可。令牌输入时不显示字符是正常现象。若助手无法提供私密输入方式，请让它指导你在电脑上手动保存；云端 Agent 则需要在其实际运行环境中配置。
 
-```bash
-python -c 'from pathlib import Path; from getpass import getpass; p=Path.home()/".config/parallel-reading-html/paddle-token"; t=getpass("粘贴 Paddle 令牌后按回车（输入不显示）: ").strip(); assert t, "令牌不能为空"; p.parent.mkdir(parents=True, exist_ok=True); p.touch(mode=0o600, exist_ok=True); p.chmod(0o600); p.write_text(t+"\n"); print("已保存令牌，未显示内容")'
-```
+**不建议把令牌直接发到聊天里**，因为它可能被保存在聊天记录中。配置只需把钥匙保存在你自己的电脑上，无需修改 skill 源码。
 
-Windows PowerShell 运行：
+### 3. 提供一份小 PDF 验证
 
-```powershell
-.\.venv\Scripts\python.exe -c 'from pathlib import Path; from getpass import getpass; p=Path.home()/".config/parallel-reading-html/paddle-token"; t=getpass("Paste Paddle token and press Enter (hidden): ").strip(); assert t, "Token must not be empty"; p.parent.mkdir(parents=True, exist_ok=True); p.write_text(t+"\n"); print("Token saved; value not displayed")'
-```
+给agent上传一份简短的PDF，再发送：
 
-出现提示后，粘贴那串令牌并按回车。输入时看不到字符属于正常现象。文件中只保存令牌本身；macOS／Linux 命令将权限设为仅当前用户可读写，Windows 请使用个人用户目录并限制其他用户访问。
+> 请用这份 PDF 验证刚才的配置：先检查 Paddle 能否成功解析、返回页数是否完整，再按 parallel-reading-html 生成一份双语 Markdown 和 HTML。请分别说明解析、双语生成和 HTML 检查是否成功。如果等待超时，保留任务记录，后续继续查询同一个任务，不要重复上传。
 
-命令会替换该位置原有令牌，重置令牌后也用同一方法更新。令牌保存在当前系统用户的 `.config/parallel-reading-html/paddle-token`，不在仓库内。若助手运行在另一台机器、容器或不同系统用户下，需要在那个运行环境单独配置。
+这一步会把 PDF 上传到 Paddle 并使用账户解析额度。测试通过后即可处理正式文献。以后更换电脑或重置令牌时，重新配置即可；已泄露的令牌应先在 AI Studio 撤销或重置。
 
-可以检查“是否已配置”，不显示令牌内容：
+## Paddle 在整个 skill 中做什么
 
-```bash
-python -c 'import os; from pathlib import Path; p=Path.home()/".config/parallel-reading-html/paddle-token"; print("已配置环境变量（优先使用）" if os.getenv("PADDLEOCR_ACCESS_TOKEN") else "已配置令牌文件" if p.is_file() and p.read_text().strip() else "未配置")'
-```
-
-Windows 将 `python` 替换为 `.\.venv\Scripts\python.exe`。这一步只检查配置存在；令牌是否有效、账户是否有可用额度，要通过真实 API 请求才能确认。
-
-### 3. 可选：通过环境变量传入
-
-熟悉终端或需要自动化部署时，可设置名为 `PADDLEOCR_ACCESS_TOKEN` 的环境变量。它的值就是令牌字符串。读取顺序为：**非空环境变量 → 本地令牌文件**。如果更新了文件却仍提示旧令牌无效，检查运行进程是否还带着旧环境变量。
-
-临时环境变量通常只影响当前终端及其启动的程序，已经打开的桌面助手不会自动获得它。仅创建 `.env` 文件也不会生效，本脚本不自动加载 `.env`。一般桌面使用优先采用上面的文件方式。
-
-### 4. 运行一次小文件解析
-
-在同一 Python 环境中，选一份可以上传的短 PDF，把下面的 `/path/to/sample.pdf` 替换为实际路径：
-
-```bash
-python scripts/parse_paddle.py "/path/to/sample.pdf" --workdir work/token-check --max-seconds 180
-```
-
-它会上传 PDF 并消耗账户解析额度。成功时会生成解析结果和页面 block；失败时根据状态排查。`--max-seconds` 是本次脚本的等待预算，不是服务器完成承诺，也不会取消服务器任务。换另一份 PDF 测试时应换一个工作目录。
-
-令牌不应出现在 GitHub、截图或运行报告中。若已公开，先在 AI Studio 撤销或重置，再更新本地配置。
-
-## Paddle／MinerU 在整个 skill 中做什么
-
-PaddleOCR 和 MinerU 提供文档解析能力：从 PDF 页面提取文字，识别标题、段落、表格、公式等版面元素，并输出供程序处理的 JSON／Markdown。扫描件还需要 OCR，将图片中的文字识别出来。复杂 PDF 的难点不仅是“有没有文字”，还包括多栏阅读顺序、脚注归属和页面位置。
+PaddleOCR 提供文档解析能力：从 PDF 页面提取文字，识别标题、段落、表格、公式等版面元素，并输出供程序处理的 JSON／Markdown。扫描件还需要 OCR，将图片中的文字识别出来。复杂 PDF 的难点不仅是“有没有文字”，还包括多栏阅读顺序、脚注归属和页面位置。
 
 ```text
 原 PDF
@@ -110,7 +78,7 @@ Markdown + HTML
   ↓ 浏览器阅读；配合 Zotero Parallel Reader 按页定位
 ```
 
-解析服务处在最前面的“原文获取与结构识别”阶段。渐进式双语由 AI 助手完成，HTML 由本地脚本构建。图表虽然可能被解析服务识别，最终呈现仍来自原 PDF 截图。
+解析服务处在最前面的“原文获取与结构识别”阶段。渐进式双语由 AI agent 完成，HTML 由本地脚本构建。图表虽然可能被解析服务识别，最终呈现仍来自原 PDF 截图。
 
 “异步解析”指先提交任务并取得任务编号，再查询 pending／running／done 等状态，最后下载结果。它便于长任务续查，并不保证立即完成。网络、上传、服务排队、文件复杂度和账户限制都可能影响等待时间。
 
@@ -136,9 +104,7 @@ Markdown + HTML
 | 本地运行 PaddleOCR／MinerU，再导入结果 | 需要另行安装解析模型并核对输出格式 | 可减少云端排队依赖；有模型、硬件和维护成本，不保证更快 |
 | 对清晰的文字型 PDF 用本地工具抽取文本 | 需要新增提取与页面映射步骤 | 简单版式可能更轻量；多栏、公式、脚注及扫描件仍需专门处理 |
 
-**当前版本只内置 Paddle 云端自动提交和续查，没有 MinerU 自动调用或故障切换。** 现有 skill 禁止在 Paddle 失败后自动改走 MinerU；人工提供兼容的已有解析结果属于已支持的导入路径。要实现“一键换供应商”，需同时修改入口策略、增加服务适配器并验证页面契约，不能只换令牌或 URL。
-
-替换解析来源时必须保留真实文件页码、完整页面清单、正确阅读顺序与原 PDF 对应关系；普通无页码 Markdown 不能直接保证 Zotero 定位。若已开始翻译，不应直接替换已有 block 分段。
+类似的网站还有 MinerU，替换解析来源时必须保留真实文件页码、完整页面清单、正确阅读顺序与原 PDF 对应关系；普通无页码 Markdown 不能直接保证 Zotero 定位。若已开始翻译，不应直接替换已有 block 分段。
 
 参考：[PaddleOCR 官方 API 文档](https://github.com/PaddlePaddle/PaddleOCR/blob/main/docs/version3.x/inference_deployment/serving/paddleocr_official_api/python.md)、[MinerU 官方项目](https://github.com/opendatalab/MinerU)、[本 skill 输入格式](references/input-formats.md)。服务额度与接口限制以各平台当前说明为准。
 

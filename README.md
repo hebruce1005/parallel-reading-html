@@ -8,12 +8,14 @@
 
 - 通过 PaddleOCR 异步 API 解析 PDF，或复用已有的兼容 JSON／带页码 Markdown。
 - 输出逐 block 对应的双语 Markdown 和可独立打开的 HTML。
-- 保留零起始文件页码与原 PDF 的 MD5，供 Zotero Parallel Reader 按按钮定位原文和译文；不是持续滚动同步。
+- 保留零起始文件页码与原 PDF 的 MD5，供 [Zotero Parallel Reader Plugin](https://github.com/hebruce1005/zotero-parallel-reader-plugin)按按钮定位原文和译文；不是持续滚动同步。
 - 在摘要前只显示题目与作者，将学术脚注汇集到文末，以原 PDF 截图呈现图表。
+- 在正文开始前梳理文献的“研究问题”、“研究方法”与“研究结论”
 - 支持长篇文献按文件页范围分轮交付，并保留全书页面映射。
+
 ## 实际任务耗时参考
 
-以下为两次真实任务的墙钟耗时，包含模型生成、解析等待、文件处理与必要修正；不包含等待用户确认的时间。
+以下为两次为在ChatGPT 6.1 sol 高模型下进行的真实任务耗时，包含模型生成、解析等待、文件处理与必要修正。
 
 | 流程 | 期刊论文 | 学术专著 |
 |---|---:|---:|
@@ -29,11 +31,23 @@
 | 交付方式 | 一次完成 MD 与 HTML | 先交付 MD，确认后生成 HTML |
 | 图表处理 | 无图表裁切 | 11 处原 PDF 截图 |
 
-**统计口径：**论文耗时由对话时间戳回溯划分；专著 MD 阶段采用任务计时记录，HTML 阶段采用对话轮次时长。各项四舍五入后可能与总计相差约 1 秒。
+耗时受解析服务排队、文献结构、图表与脚注复杂度、模型响应速度及修正量影响，可以让Agent“审核一轮没有即可输出，无需过度审查”，否则agent 可能会通过多轮优化尝试更加逼近60%英文保留率的理想标准，消耗额外的时间与额度。一般的，一轮生成审核后的html会处在40-60%的英文保留率区间。
 
-**结果说明：**两次任务均完成结构核验和一轮定向调整；论文英文保留率为 55.45%，专著为 52.93%，语言指标并非全部达到默认目标。本表反映实际交付耗时，不代表全部质量指标达标的性能基准。
+## 段落示例
 
-耗时受解析服务排队、文献结构、图表与脚注复杂度、模型响应速度及修正量影响，不能按页数线性推算。Zotero 定位按钮的用户端实测不计入上述时间。
+下面是基于 ["Cognitive load theory and complex learning: Recent developments and future directions"](https://link.springer.com/article/10.1007/S10648-005-3951-0)这篇文献摘要的混合文本翻译示例，均为ChatGPT 6.1 sol提供。
+
+**原文**
+Traditionally, Cognitive Load Theory (CLT) has focused on instructional methods to decrease extraneous cognitive load so that available cognitive resources can be fully devoted to learning. This article strengthens the cognitive base of CLT by linking cognitive processes to the processes used by biological evolution. The article discusses recent developments in CLT related to the current view in instructional design that real-life tasks should be the driving force for complex learning. First, the complexity, or intrinsic cognitive load, of such tasks is often high so that new methods are needed to manage cognitive load. Second, complex learning is a lengthy process requiring learners’ motivational states and levels of expertise development to be taken into account. Third, this perspective requires more advanced methods to measure expertise and cognitive load so that instruction can be flexibly adapted to individual learners’ needs. Experimental studies are reviewed to illustrate these recent developments. Guidelines for future research are provided.
+
+**40%英文保留率**
+传统上，Cognitive Load Theory（CLT）一直关注通过 instructional methods 来 decrease extraneous cognitive load，使 available cognitive resources 能充分用于学习。本文通过把 cognitive processes 与 biological evolution 所采用的过程联系起来，强化 the cognitive base of CLT。文章讨论了 CLT 的 recent developments，它们与 instructional design 中的一种当前观点相关：real-life tasks 应成为 complex learning 的 driving force。首先，这类任务的复杂性，也就是 intrinsic cognitive load，往往较高，因此需要新的方法来 manage cognitive load。其次，complex learning 是一个 lengthy process，需要考虑学习者的 motivational states 以及 expertise development 的水平。第三，这一视角要求采用更先进的方法来 measure expertise and cognitive load，以便灵活调整教学，适应 individual learners’ needs。本文回顾 experimental studies，以说明这些近期发展，并提出 guidelines for future research。
+
+**60%英文保留率**
+传统上，Cognitive Load Theory（CLT）一直关注通过 instructional methods 来 decrease extraneous cognitive load，以便 available cognitive resources can be fully devoted to learning。本文通过把 cognitive processes 与 the processes used by biological evolution 联系起来，强化 the cognitive base of CLT。文章讨论 CLT 的 recent developments，它们与 instructional design 中的一种 current view 相关：real-life tasks 应成为 complex learning 的 driving force。首先，这类任务的复杂性，即 intrinsic cognitive load，往往很高，因此需要 new methods 来 manage cognitive load。其次，complex learning 是一个 lengthy process，需要把 learners’ motivational states 和 levels of expertise development 考虑在内。第三，这一 perspective 要求使用 more advanced methods 来 measure expertise and cognitive load，以便 instruction can be flexibly adapted to individual learners’ needs。本文回顾 experimental studies，来 illustrate these recent developments，并提出 guidelines for future research。
+
+**中文翻译**
+传统上，认知负荷理论一直关注通过教学方法减少外在认知负荷，使可用的认知资源能够充分用于学习。本文通过将认知过程与生物演化所采用的过程联系起来，强化认知负荷理论的认知基础。文章讨论了认知负荷理论的近期发展，这些发展与当前教学设计中的一种观点相关：真实生活中的任务应当成为复杂学习的驱动力。首先，这类任务的复杂性，也就是内在认知负荷，往往较高，因此需要新的方法来管理认知负荷。其次，复杂学习是一个长期过程，需要考虑学习者的动机状态及其专长发展的水平。第三，这一视角要求采用更先进的方法来测量专长和认知负荷，以便灵活调整教学，适应学习者的个体需要。本文回顾了实验研究，以说明这些近期发展，并为未来研究提出指导建议。
 
 ## 安装
 
